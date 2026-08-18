@@ -6,7 +6,8 @@ use std::collections::HashMap;
 
 /// 点灯解法的技巧。每种技巧有固定分数（分数值对应难度计算）。
 #[derive(Debug, Copy, Hash)]
-#[derive_const(Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "nightly", derive_const(Clone, PartialEq, Eq))]
+#[cfg_attr(not(feature = "nightly"), derive(Clone, PartialEq, Eq))]
 pub enum Technique {
     /// 灯照路径禁灯：灯的可照格不能再放灯。分 0
     LampBeam,
@@ -24,16 +25,12 @@ pub enum Technique {
     SourceCaseAnalysis,
     /// 唯一光源：未照亮格只剩一个可行放灯处 → 放灯。分 64
     OnlySource,
-    /// 试置矛盾：两个试置分支恰有一个矛盾，另一分支即确定。分 0
-    TrialContradiction,
-    /// 无论如何都确定：两个试置分支结论相同，共同格确定。分 0
-    TrialDetermined,
 }
 
 impl Technique {
     pub fn score(self) -> u32 {
         match self {
-            Self::LampBeam | Self::TrialContradiction | Self::TrialDetermined => 0,
+            Self::LampBeam => 0,
             Self::JustEnough | Self::WouldCreateUnlit | Self::ClueCaseAnalysis => 2,
             Self::ClueFull => 8,
             Self::WouldMakeShort => 12,
@@ -49,18 +46,9 @@ pub struct Methods {
 }
 
 impl Methods {
-    /// 每次技巧链 pass 开始时清空（最后存活的方法表决定 tech）。
-    pub fn clear(&mut self) {
-        self.weights.clear();
-    }
-
     /// 记录一次技巧应用（同技巧去重，权重累加）。
     pub fn record(&mut self, tech: Technique) {
         *self.weights.entry(tech).or_insert(0) += 1;
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.weights.is_empty()
     }
 
     /// tech = Σ 技巧分 × 权重。

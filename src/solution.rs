@@ -19,7 +19,8 @@ use serde::Serialize;
 use crate::board::{is_solution, Board};
 
 #[derive(Debug, Copy)]
-#[derive_const(Clone, PartialEq, Eq, Serialize)]
+#[cfg_attr(feature = "nightly", derive_const(Clone, PartialEq, Eq, Serialize))]
+#[cfg_attr(not(feature = "nightly"), derive(Clone, PartialEq, Eq, Serialize))]
 pub enum SolutionCount {
     #[serde(rename = "0")]
     Empty,

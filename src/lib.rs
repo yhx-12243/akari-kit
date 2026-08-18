@@ -1,13 +1,13 @@
-#![feature(const_clone, const_cmp, derive_const)]
+#![cfg_attr(feature = "nightly", feature(const_clone, const_cmp, derive_const))]
 
 // lib.rs — 点灯（akari）求解器入口
 // 搜索主循环（难度逐级升级）+ 技巧链 + 难度评分
 
-pub mod answer_methods;
-pub mod answer_model;
-pub mod board;
-pub mod solution;
-pub mod techniques;
+pub(crate) mod answer_methods;
+pub(crate) mod answer_model;
+pub(crate) mod board;
+pub(crate) mod solution;
+pub(crate) mod techniques;
 
 use core::slice;
 
@@ -16,15 +16,19 @@ use serde::Serialize;
 use answer_methods::Methods;
 use answer_model::{Model, trial_placement, TrialTally};
 use board::{is_solution, Board};
-use solution::SolutionCount;
-use techniques::{ALL_TECHNIQUES, Status};
+use techniques::ALL_TECHNIQUES;
 
-#[derive_const(Serialize)]
+pub use solution::SolutionCount;
+pub use techniques::Status;
+
+#[cfg_attr(feature = "nightly", derive_const(Serialize))]
+#[cfg_attr(not(feature = "nightly"), derive(Serialize))]
+#[repr(C)]
 pub struct LpResult {
-    status: Status,
-    solutions: SolutionCount,
     dp: u64,
     level: u32,
+    status: Status,
+    solutions: SolutionCount,
     unknown: usize,
     rating_hundredths: Option<u32>,
     difficulty_version: usize,

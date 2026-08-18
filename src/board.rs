@@ -3,8 +3,6 @@
 use crate::{answer_methods::*, answer_model::Model, techniques::Status};
 
 pub struct Board<'a> {
-    pub w: usize,
-    pub h: usize,
     // cells：0=白格, 1=墙, 2..=6=数字墙（值为 2+数字）
     pub cells: &'a [u8],
     // 每格的 4 邻格列表（含墙，用于数字墙邻格约束）
@@ -69,8 +67,6 @@ impl<'a> Board<'a> {
             .filter_map(|(i, &c)| if c >= 2 { Some((i, c as u32 - 2)) } else { None })
             .collect();
         Self {
-            w,
-            h,
             cells: data,
             neighbors,
             lamp_reach,

@@ -14,7 +14,8 @@ pub use only_source::unique_source;
 pub use source_cases::source_case_analysis;
 
 #[derive(Debug, Copy)]
-#[derive_const(Serialize, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "nightly", derive_const(Serialize, Clone, PartialEq, Eq))]
+#[cfg_attr(not(feature = "nightly"), derive(Serialize, Clone, PartialEq, Eq))]
 #[serde(rename_all = "UPPERCASE")]
 pub enum Status {
     Completed,

@@ -14,14 +14,6 @@ pub struct Model<'a, 'b: 'a> {
 }
 
 impl<'a, 'b: 'a> Model<'a, 'b> {
-    pub fn new(board: &'a Board<'b>, state: Vec<u8>) -> Self {
-        Self {
-            board,
-            state,
-            methods: Methods::default(),
-        }
-    }
-
     /// 设置格子状态并记录技巧：0=应用+记录, 1=同状态无变化, 2=冲突
     pub fn apply(&mut self, idx: usize, value: u8, tech: Technique) -> Status {
         let current = self.state[idx];

@@ -1,8 +1,17 @@
 [package]
 name = "akari-kit"
-version = "0.1.0"
+version = "0.1.1"
+authors = ["kitsune <yhx12243@gmail.com>"]
+description = "1:1 reproduction of Akari (Lightup, Bijutsukan) part of [LogicPuzzle Solver](https://solver.logicpuzzle.app/)"
 edition = "2024"
+homepage = "https://solver.logicpuzzle.app/"
+keywords = ["akari", "bijutsukan", "lightup", "puzzle", "solver"]
+license = "MIT"
+repository = "https://github.com/yhx-12243/akari-kit"
 
 [dependencies]
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = { version = "1.0.151", features = ["float_roundtrip"] }
+
+[features]
+nightly = []
