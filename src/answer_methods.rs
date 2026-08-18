@@ -28,7 +28,7 @@ pub enum Technique {
 }
 
 impl Technique {
-    pub fn score(self) -> u32 {
+    pub const fn score(self) -> u32 {
         match self {
             Self::LampBeam => 0,
             Self::JustEnough | Self::WouldCreateUnlit | Self::ClueCaseAnalysis => 2,

@@ -14,8 +14,8 @@ use core::slice;
 use serde::Serialize;
 
 use answer_methods::Methods;
-use answer_model::{Model, trial_placement, TrialTally};
-use board::{is_solution, Board};
+use answer_model::{Model, TrialTally, trial_placement};
+use board::{Board, is_solution};
 use techniques::ALL_TECHNIQUES;
 
 pub use solution::SolutionCount;
@@ -25,13 +25,13 @@ pub use techniques::Status;
 #[cfg_attr(not(feature = "nightly"), derive(Serialize))]
 #[repr(C)]
 pub struct LpResult {
-    dp: u64,
-    level: u32,
-    status: Status,
-    solutions: SolutionCount,
-    unknown: usize,
-    rating_hundredths: Option<u32>,
-    difficulty_version: usize,
+    pub dp: u64,
+    pub level: u32,
+    pub status: Status,
+    pub solutions: SolutionCount,
+    pub unknown: usize,
+    pub rating_hundredths: Option<u32>,
+    pub difficulty_version: usize,
 }
 
 // 难度分：solutions 为 "0"/"2+" 时 → null；
@@ -64,7 +64,15 @@ fn rating_from_dp(dp: u64) -> u32 {
     549
 }
 
-pub fn solve_by_logicpuzzle(width: usize, height: usize, data: *const u8) -> LpResult {
+/// # Safety
+///
+/// The caller must ensure that `data` points to a valid slice of length `width * height`.
+#[must_use]
+pub unsafe fn solve_by_logicpuzzle_unchecked(
+    width: usize,
+    height: usize,
+    data: *const u8,
+) -> LpResult {
     let n = width * height;
     let slice = unsafe { slice::from_raw_parts(data, n) };
     let board = Board::new(width, height, slice);
@@ -201,7 +209,10 @@ pub fn solve_by_logicpuzzle(width: usize, height: usize, data: *const u8) -> LpR
         0
     } else {
         let tech = methods.tech();
-        let mut difficulty_score = tech + trial_tally.nested * 4 + level6_undecided * 12 + (level7_undecided + trial_tally.conclusions) * 40;
+        let mut difficulty_score = tech
+            + trial_tally.nested * 4
+            + level6_undecided * 12
+            + (level7_undecided + trial_tally.conclusions) * 40;
         if status == Status::Stopped {
             difficulty_score += (unknown as u32) * 90;
         }
@@ -230,4 +241,17 @@ pub fn solve_by_logicpuzzle(width: usize, height: usize, data: *const u8) -> LpR
         rating_hundredths,
         difficulty_version: 1,
     }
+}
+
+/// # Panics
+///
+/// Panics if `width * height` does not equal `data.len()`.
+#[must_use]
+pub fn solve_by_logicpuzzle(width: usize, height: usize, data: &[u8]) -> LpResult {
+    assert_eq!(
+        width * height,
+        data.len(),
+        "width * height must equal data length"
+    );
+    unsafe { solve_by_logicpuzzle_unchecked(width, height, data.as_ptr()) }
 }

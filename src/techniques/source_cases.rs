@@ -13,7 +13,7 @@ use crate::{
     answer_methods::{Methods, Technique},
     answer_model::Model,
     board::{clue_neighbors, is_consistent, lamp_beam},
-    techniques::{unique_source, Status},
+    techniques::{Status, unique_source},
 };
 
 pub fn source_case_analysis(model: &mut Model) -> Status {
@@ -63,7 +63,10 @@ pub fn source_case_analysis(model: &mut Model) -> Status {
                 let source_ret = unique_source(&mut prop_model);
                 let undecided = prop_model.undecided();
                 copy = prop_model.state;
-                if neighbor_ret == Status::Broken || beam_ret == Status::Broken || source_ret == Status::Broken {
+                if neighbor_ret == Status::Broken
+                    || beam_ret == Status::Broken
+                    || source_ret == Status::Broken
+                {
                     bad = true;
                     break;
                 }
@@ -84,7 +87,7 @@ pub fn source_case_analysis(model: &mut Model) -> Status {
                         always_placed[i] = 0;
                     }
                     1 => always_forbidden[i] = 0, // 放灯 → 清"全部禁"
-                    _ => always_placed[i] = 0, // 禁 → 清"全部放"
+                    _ => always_placed[i] = 0,    // 禁 → 清"全部放"
                 }
             }
         }

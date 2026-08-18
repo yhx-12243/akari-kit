@@ -10,11 +10,7 @@
 //   扫描完成后，才统一对记录的每个候选放灯。
 //   （关键：先收集后应用——应用过程不得影响候选判定）
 
-use crate::{
-    answer_methods::Technique,
-    answer_model::Model,
-    techniques::Status,
-};
+use crate::{answer_methods::Technique, answer_model::Model, techniques::Status};
 
 pub fn unique_source(model: &mut Model) -> Status {
     let lit = model.board.lit(&model.state);

@@ -2,11 +2,7 @@
 // 对每个未决白格假置灯，若造成数字墙不足（分 12）
 // 或出现无法照亮的白格（分 2）→ 该格禁灯。
 
-use crate::{
-    answer_methods::Technique,
-    answer_model::Model,
-    techniques::Status,
-};
+use crate::{answer_methods::Technique, answer_model::Model, techniques::Status};
 
 pub fn place_breaks(model: &mut Model) -> Status {
     let n = model.state.len();

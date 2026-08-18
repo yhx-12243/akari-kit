@@ -1,6 +1,6 @@
 // board.rs — 棋盘数据结构与基础规则传播
 
-use crate::{answer_methods::*, answer_model::Model, techniques::Status};
+use crate::{answer_methods::Technique, answer_model::Model, techniques::Status};
 
 pub struct Board<'a> {
     // cells：0=白格, 1=墙, 2..=6=数字墙（值为 2+数字）
@@ -64,7 +64,13 @@ impl<'a> Board<'a> {
         let walls = data
             .iter()
             .enumerate()
-            .filter_map(|(i, &c)| if c >= 2 { Some((i, c as u32 - 2)) } else { None })
+            .filter_map(|(i, &c)| {
+                if c >= 2 {
+                    Some((i, c as u32 - 2))
+                } else {
+                    None
+                }
+            })
             .collect();
         Self {
             cells: data,

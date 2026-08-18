@@ -10,16 +10,11 @@
 //   - 无有效组合 → 跳过继续（不返回 2）；无确定格 → 返回 1。
 
 use crate::{
-    answer_methods::Technique,
-    answer_model::Model,
-    board::is_consistent,
-    techniques::Status,
+    answer_methods::Technique, answer_model::Model, board::is_consistent, techniques::Status,
 };
 
 /// 从 cands 中选 k 个的全部组合。
 fn combinations(cands: &[usize], k: usize) -> Vec<Vec<usize>> {
-    let mut out = Vec::new();
-    let mut current = Vec::new();
     fn rec(
         cands: &[usize],
         k: usize,
@@ -37,6 +32,8 @@ fn combinations(cands: &[usize], k: usize) -> Vec<Vec<usize>> {
             current.pop();
         }
     }
+    let mut out = Vec::new();
+    let mut current = Vec::new();
     rec(cands, k, 0, &mut current, &mut out);
     out
 }
@@ -78,7 +75,7 @@ pub fn clue_case_analysis(model: &mut Model) -> Status {
             let mut copy = entry.clone();
             for &cand in &cands {
                 let value = if combo.contains(&cand) { 1u8 } else { 2u8 };
-                debug_assert!(copy[cand] == 0);
+                debug_assert_eq!(copy[cand], 0);
                 copy[cand] = value;
             }
             // 只对组合灯格做照程禁灯（state==0→2，其余跳过；不检测冲突）

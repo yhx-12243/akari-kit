@@ -3,8 +3,8 @@
 
 use crate::{
     answer_methods::{Methods, Technique},
-    board::{clue_neighbors, lamp_beam, Board},
-    techniques::{unique_source, Status},
+    board::{Board, clue_neighbors, lamp_beam},
+    techniques::{Status, unique_source},
 };
 
 pub struct Model<'a, 'b: 'a> {
@@ -96,6 +96,7 @@ pub struct TrialTally {
 /// 3) 尾部分支：全矛盾→2；恰一矛盾→结论次数++ 后把另一分支的状态落实（试置矛盾）；
 ///    两分支都可行→找共同确定格，有→结论次数++ 后全部落实（无论如何都确定），无→下一个候选格；
 /// 4) 全部候选无结论→返回 1。
+///
 /// tally：试置阶段的难度计数（conclusions / nested）。
 pub fn trial_placement(model: &mut Model, tally: &mut TrialTally, depth: u32) -> Status {
     // 收集全部候选
@@ -163,7 +164,12 @@ pub fn trial_placement(model: &mut Model, tally: &mut TrialTally, depth: u32) ->
 
 /// 试置分支的传播：数字墙邻格约束/灯照路径禁灯/唯一光源到未决数稳定（方法丢弃）。
 /// depth>=1：稳定且仍有未决 → 递归试置 depth-1；递归有进展 → 回传播循环。
-fn trial_propagate(model: &Model, copy: &mut Vec<u8>, tally: &mut TrialTally, depth: u32) -> Status {
+fn trial_propagate(
+    model: &Model,
+    copy: &mut Vec<u8>,
+    tally: &mut TrialTally,
+    depth: u32,
+) -> Status {
     loop {
         let before = count_undecided(copy);
         let mut prop_model = Model {
@@ -175,7 +181,10 @@ fn trial_propagate(model: &Model, copy: &mut Vec<u8>, tally: &mut TrialTally, de
         let beam_ret = lamp_beam(&mut prop_model);
         let source_ret = unique_source(&mut prop_model);
         *copy = prop_model.state;
-        if neighbor_ret == Status::Broken || beam_ret == Status::Broken || source_ret == Status::Broken {
+        if neighbor_ret == Status::Broken
+            || beam_ret == Status::Broken
+            || source_ret == Status::Broken
+        {
             return Status::Broken;
         }
         let after = count_undecided(copy);

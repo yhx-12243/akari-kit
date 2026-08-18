@@ -7,7 +7,10 @@ pub mod source_cases;
 
 use serde::Serialize;
 
-use crate::{answer_model::Model, board::{clue_neighbors, lamp_beam}};
+use crate::{
+    answer_model::Model,
+    board::{clue_neighbors, lamp_beam},
+};
 pub use clue_cases::clue_case_analysis;
 pub use lamp_conflict::place_breaks;
 pub use only_source::unique_source;

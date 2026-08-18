@@ -16,7 +16,7 @@
 
 use serde::Serialize;
 
-use crate::board::{is_solution, Board};
+use crate::board::{Board, is_solution};
 
 #[derive(Debug, Copy)]
 #[cfg_attr(feature = "nightly", derive_const(Clone, PartialEq, Eq, Serialize))]
@@ -174,7 +174,7 @@ fn count_dfs(board: &Board, state: &[u8], node_count: &mut u64, tally: &mut Tall
     let Some(cands) = best else {
         // 无候选（全已定）→ 完整盘面判定：未决 → 禁灯后校验
         let mut decided = propagated.clone();
-        for s in decided.iter_mut() {
+        for s in &mut decided {
             if *s == 0 {
                 *s = 2;
             }
